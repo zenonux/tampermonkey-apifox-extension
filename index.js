@@ -12,27 +12,33 @@
 
 (function () {
   "use strict";
-  const rootEl = document.body;
-  const jsonData = JSON.parse(rootEl.innerText);
-  const apis = [];
-  Object.keys(jsonData.paths).forEach((url) => {
-    if (jsonData.paths[url].get) {
-      apis.push(_buildApi(url, "get", jsonData.paths[url].get));
+
+  window.onload = _init;
+
+  function _init() {
+    const rootEl = document.querySelector(".cm-content") || document.body;
+    const jsonData = JSON.parse(rootEl.innerText);
+    const apis = [];
+    Object.keys(jsonData.paths).forEach((url) => {
+      if (jsonData.paths[url].get) {
+        apis.push(_buildApi(url, "get", jsonData.paths[url].get));
+      }
+      if (jsonData.paths[url].post) {
+        apis.push(_buildApi(url, "post", jsonData.paths[url].post));
+      }
+      if (jsonData.paths[url].put) {
+        apis.push(_buildApi(url, "put", jsonData.paths[url].put));
+      }
+      if (jsonData.paths[url].delete) {
+        apis.push(_buildApi(url, "delete", jsonData.paths[url].delete));
+      }
+    });
+    if (apis.length > 0) {
+      let apiStr = apis.join("");
+      _showExportButton(apiStr);
     }
-    if (jsonData.paths[url].post) {
-      apis.push(_buildApi(url, "post", jsonData.paths[url].post));
-    }
-    if (jsonData.paths[url].put) {
-      apis.push(_buildApi(url, "put", jsonData.paths[url].put));
-    }
-    if (jsonData.paths[url].delete) {
-      apis.push(_buildApi(url, "delete", jsonData.paths[url].delete));
-    }
-  });
-  if (apis.length > 0) {
-    let apiStr = apis.join("");
-    _showExportButton(apiStr);
   }
+
   function _buildApi(url, method, info) {
     let { summary, parameters, requestBody, responses } = info;
     let ParamsType = "{}";
